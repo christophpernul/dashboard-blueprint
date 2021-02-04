@@ -12,15 +12,27 @@ from app import app, data
 import data_lib as dl
 import plotting_lib as pl
 
+def cardify_element(function):
+    ### Decorator, that wraps the called function (which renders the HTML element) inside a dbc.Card
+    def inner(*args, **kwargs):
+        cardified_element = \
+            dbc.Card(
+                dbc.CardBody(
+                    function(*args, **kwargs)
+                )
+            )
+        return(cardified_element)
+    return(inner)
+
+@cardify_element
+def dbc_column(element):
+    return(dbc.Col(element))
+
 def render_tab1(tab_title, kpi_title):
     avg = dl.get_average(data)
     heading = \
         dbc.Col(
-            dbc.Card(
-                dbc.CardBody(
-                    html.H1(html.B(tab_title))
-                ),
-            ),
+            dbc_column(html.H1(html.B(tab_title))),
             width=6,
             align='center'
         )
@@ -32,14 +44,9 @@ def render_tab1(tab_title, kpi_title):
                 justify='around'
             ),
         )
-    kpi_panel = dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody(
-                            html.Div([kpi_box])
-                        ),
-                    ),
-                    width=6,
-                    align='center'
+    kpi_panel = dbc.Col(dbc_column(html.Div([kpi_box])),
+                        width=6,
+                        align='center'
                 )
 
     header_panel = dbc.Row([heading, kpi_panel], justify='around')
