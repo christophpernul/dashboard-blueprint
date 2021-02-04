@@ -25,31 +25,34 @@ def cardify_element(function):
     return(inner)
 
 @cardify_element
-def dbc_column(element):
-    return(dbc.Col(element))
+def heading(element):
+    return(element)
 
-def render_tab1(tab_title, kpi_title):
-    avg = dl.get_average(data)
-    heading = \
-        dbc.Col(
-            dbc_column(html.H1(html.B(tab_title))),
-            width=6,
-            align='center'
-        )
-    kpi_box = \
-        html.Div(
+@cardify_element
+def kpi_box(kpi_title, kpi_value):
+    return(html.Div(
             dbc.Row(
                 [dbc.Col(html.H2(kpi_title)),
-                 dbc.Col(html.H2(str(round(avg, 2))))],
+                 dbc.Col(html.H2(kpi_value))],
                 justify='around'
             ),
         )
-    kpi_panel = dbc.Col(dbc_column(html.Div([kpi_box])),
-                        width=6,
-                        align='center'
-                )
+    )
 
-    header_panel = dbc.Row([heading, kpi_panel], justify='around')
+def render_tab1(tab_title, kpi_title):
+    avg = str(round(dl.get_average(data), 2))
+    heading_panel = \
+        dbc.Col(
+            heading(html.H1(html.B(tab_title))),
+            width=6,
+            align='center'
+        )
+    kpi_panel = dbc.Col(
+        kpi_box(kpi_title, avg),
+        width=6,
+        align='center'
+    )
+    header_panel = dbc.Row([heading_panel, kpi_panel], justify='around')
     return(html.Div([header_panel]))
 
 def render_tab2():
